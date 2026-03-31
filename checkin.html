@@ -14,7 +14,7 @@ const OFFICE_LAT = 31.4037;
 const OFFICE_LON = 34.31997;
 
 // 📏 المسافة
-const MAX_DISTANCE = 150;
+const MAX_DISTANCE = 300;
 
 // 🔥 توليد Device ID
 let deviceId = localStorage.getItem("deviceId");
@@ -46,6 +46,13 @@ async function sendData(){
   }
 
   navigator.geolocation.getCurrentPosition(async (pos)=>{
+}, ()=>{
+  alert("❌ لازم تشغل الموقع");
+}, {
+  enableHighAccuracy: true,
+  timeout: 10000,
+  maximumAge: 0
+});
     const lat = pos.coords.latitude;
     const lon = pos.coords.longitude;
 
