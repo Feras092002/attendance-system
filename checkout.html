@@ -10,8 +10,8 @@
 const SCRIPT_URL = "YOUR_SCRIPT_URL";
 
 // 👇 حط إحداثيات مؤسستك هون
-const OFFICE_LAT = 32.2211;
-const OFFICE_LON = 35.2544;
+const OFFICE_LAT = 31.4037;
+const OFFICE_LON = 34.31997;
 
 // المسافة المسموحة بالمتر
 const MAX_DISTANCE = 100;
@@ -47,7 +47,7 @@ async function sendData(){
 
     const device = navigator.userAgent;
 
-    await fetch(SCRIPT_URL, {
+    await fetch("https://script.google.com/macros/s/AKfycbyuOFKyUDEjeC4JD6uGV9ffSoHoDIakL0SK95TBuTI-t-JoMrMWGk_9n9_8FhFRk5UfLg/exec", {
       method: "POST",
       body: JSON.stringify({
         name: name,
@@ -60,7 +60,7 @@ async function sendData(){
       })
     });
 
-    alert("تم تسجيل الدخول: " + status);
+    alert("تم تسجيل الخروج: " + status);
   });
 }
 </script>
