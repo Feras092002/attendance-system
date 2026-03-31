@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>تسجيل خروج</h2>
+
+<input type="text" id="name" placeholder="ادخل اسمك">
+<button onclick="sendData()">خروج</button>
+
+<script>
+const SCRIPT_URL = "YOUR_SCRIPT_URL";
+
+// 👇 حط إحداثيات مؤسستك هون
+const OFFICE_LAT = 32.2211;
+const OFFICE_LON = 35.2544;
+
+// المسافة المسموحة بالمتر
+const MAX_DISTANCE = 100;
+
+function getDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371e3;
+  const φ1 = lat1 * Math.PI/180;
+  const φ2 = lat2 * Math.PI/180;
+  const Δφ = (lat2-lat1) * Math.PI/180;
+  const Δλ = (lon2-lon1) * Math.PI/180;
+
+  const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ/2) * Math.sin(Δλ/2);
+
+  return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+}
+
+async function sendData(){
+  const name = document.getElementById("name").value;
+
+  navigator.geolocation.getCurrentPosition(async (pos)=>{
+    const lat = pos.coords.latitude;
+    const lon = pos.coords.longitude;
+
+    const distance = getDistance(lat, lon, OFFICE_LAT, OFFICE_LON);
+
+    let status = distance <= MAX_DISTANCE ? "داخل المؤسسة" : "خارج المؤسسة";
+
+    // جلب IP
+    const res = await fetch("https://api.ipify.org?format=json");
+    const ipData = await res.json();
+
+    const device = navigator.userAgent;
+
+    await fetch(SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        name: name,
+        action: "checkout",
+        lat: lat,
+        lon: lon,
+        status: status,
+        ip: ipData.ip,
+        device: device
+      })
+    });
+
+    alert("تم تسجيل الدخول: " + status);
+  });
+}
+</script>
+
+</body>
+</html>
