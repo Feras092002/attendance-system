@@ -14,7 +14,7 @@ const OFFICE_LON = 34.31997;
 
 const MAX_DISTANCE = 300;
 
-// 🔥 نفس Device ID
+// 🔥 Device ID
 let deviceId = localStorage.getItem("deviceId");
 if(!deviceId){
   deviceId = Math.random().toString(36).substring(2);
@@ -44,13 +44,7 @@ async function sendData(){
   }
 
   navigator.geolocation.getCurrentPosition(async (pos)=>{
-}, ()=>{
-  alert("❌ لازم تشغل الموقع");
-}, {
-  enableHighAccuracy: true,
-  timeout: 10000,
-  maximumAge: 0
-});
+
     const lat = pos.coords.latitude;
     const lon = pos.coords.longitude;
 
@@ -81,15 +75,19 @@ async function sendData(){
     else if(result === "Cannot checkout"){
       alert("❌ لازم تسجل دخول أول");
     }
-      else if(result === "Already checked out"){
-  alert("❌ تم تسجيل الخروج مسبقًا");
-}
+    else if(result === "Already checked out"){
+      alert("❌ تم تسجيل الخروج مسبقًا");
+    }
     else{
       alert("❌ خطأ في العملية");
     }
 
   }, ()=>{
     alert("❌ لازم تشغل الموقع");
+  }, {
+    enableHighAccuracy: true,
+    timeout: 10000,
+    maximumAge: 0
   });
 }
 </script>
