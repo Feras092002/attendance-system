@@ -60,7 +60,23 @@ async function sendData(){
       })
     });
 
-    alert("تم تسجيل الخروج: " + status);
+    
+// 👇 هون الإضافة المهمة
+const result = await response.text();
+
+// 👇 هون تحط الشرط بدل alert القديم
+if(result === "OK"){
+  alert("✅ تم تسجيل الخروج");
+}
+else if(result === "Device already used"){
+  alert("❌ هذا الجهاز أو الشبكة مستخدمة مسبقًا");
+}
+else if(result === "Already checked in"){
+  alert("❌ انت مسجل دخول بالفعل");
+}
+else{
+  alert("❌ لازم تسجل دخول قبل الخروج");
+}
   });
 }
 </script>
