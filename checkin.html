@@ -7,14 +7,14 @@
 <button onclick="sendData()">دخول</button>
 
 <script>
-const SCRIPT_URL = "YOUR_SCRIPT_URL";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqM1W_iSGaCXersjC91eS7RF-s2b9fOfLfOw1vDbYLgnd_PfnYg-3t2P8plnwefM1Bhg/exec";
 
-// 👇 حط إحداثيات مؤسستك هون
+// 📍 إحداثيات المؤسسة
 const OFFICE_LAT = 31.4037;
 const OFFICE_LON = 34.31997;
 
-// المسافة المسموحة بالمتر
-const MAX_DISTANCE = 100;
+// 📏 المسافة المسموحة
+const MAX_DISTANCE = 150;
 
 function getDistance(lat1, lon1, lat2, lon2) {
   const R = 6371e3;
@@ -33,21 +33,27 @@ function getDistance(lat1, lon1, lat2, lon2) {
 async function sendData(){
   const name = document.getElementById("name").value;
 
+  if(name.trim() === ""){
+    alert("❌ الرجاء إدخال الاسم");
+    return;
+  }
+
   navigator.geolocation.getCurrentPosition(async (pos)=>{
     const lat = pos.coords.latitude;
     const lon = pos.coords.longitude;
 
     const distance = getDistance(lat, lon, OFFICE_LAT, OFFICE_LON);
-
     let status = distance <= MAX_DISTANCE ? "داخل المؤسسة" : "خارج المؤسسة";
 
-    // جلب IP
+    // 🌐 جلب IP
     const res = await fetch("https://api.ipify.org?format=json");
     const ipData = await res.json();
 
+    // 📱 معلومات الجهاز
     const device = navigator.userAgent;
 
-    await fetch("https://script.google.com/macros/s/AKfycbwqM1W_iSGaCXersjC91eS7RF-s2b9fOfLfOw1vDbYLgnd_PfnYg-3t2P8plnwefM1Bhg/exec", {
+    // 🔥 إرسال البيانات
+    const response = await fetch(SCRIPT_URL, {
       method: "POST",
       body: JSON.stringify({
         name: name,
@@ -60,23 +66,24 @@ async function sendData(){
       })
     });
 
-    
-// 👇 هون الإضافة المهمة
-const result = await response.text();
+    const result = await response.text();
 
-// 👇 هون تحط الشرط بدل alert القديم
-if(result === "OK"){
-  alert("✅ تم تسجيل الخروج");
-}
-else if(result === "Device already used"){
-  alert("❌ هذا الجهاز أو الشبكة مستخدمة مسبقًا");
-}
-else if(result === "Already checked in"){
-  alert("❌ انت مسجل دخول بالفعل");
-}
-else{
-  alert("❌ لازم تسجل دخول قبل الخروج");
-}
+    // ✅ النتائج
+    if(result === "OK"){
+      alert("✅ تم تسجيل الدخول");
+    }
+    else if(result === "Device already used"){
+      alert("❌ هذا الجهاز أو الشبكة مستخدمة مسبقًا");
+    }
+    else if(result === "Already checked in"){
+      alert("❌ انت مسجل دخول بالفعل");
+    }
+    else{
+      alert("❌ لا يمكن تسجيل الدخول");
+    }
+
+  }, ()=>{
+    alert("❌ لازم تسمح بالوصول للموقع");
   });
 }
 </script>
