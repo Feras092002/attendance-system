@@ -13,8 +13,15 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqM1W_iSGaCXersjC91
 const OFFICE_LAT = 31.4037;
 const OFFICE_LON = 34.31997;
 
-// 📏 المسافة المسموحة
+// 📏 المسافة
 const MAX_DISTANCE = 150;
+
+// 🔥 توليد Device ID
+let deviceId = localStorage.getItem("deviceId");
+if(!deviceId){
+  deviceId = Math.random().toString(36).substring(2);
+  localStorage.setItem("deviceId", deviceId);
+}
 
 function getDistance(lat1, lon1, lat2, lon2) {
   const R = 6371e3;
@@ -23,9 +30,9 @@ function getDistance(lat1, lon1, lat2, lon2) {
   const Δφ = (lat2-lat1) * Math.PI/180;
   const Δλ = (lon2-lon1) * Math.PI/180;
 
-  const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-            Math.cos(φ1) * Math.cos(φ2) *
-            Math.sin(Δλ/2) * Math.sin(Δλ/2);
+  const a = Math.sin(Δφ/2)**2 +
+            Math.cos(φ1)*Math.cos(φ2)*
+            Math.sin(Δλ/2)**2;
 
   return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
 }
@@ -34,7 +41,7 @@ async function sendData(){
   const name = document.getElementById("name").value;
 
   if(name.trim() === ""){
-    alert("❌ الرجاء إدخال الاسم");
+    alert("❌ ادخل الاسم");
     return;
   }
 
@@ -45,14 +52,6 @@ async function sendData(){
     const distance = getDistance(lat, lon, OFFICE_LAT, OFFICE_LON);
     let status = distance <= MAX_DISTANCE ? "داخل المؤسسة" : "خارج المؤسسة";
 
-    // 🌐 جلب IP
-    const res = await fetch("https://api.ipify.org?format=json");
-    const ipData = await res.json();
-
-    // 📱 معلومات الجهاز
-    const device = navigator.userAgent;
-
-    // 🔥 إرسال البيانات
     const response = await fetch(SCRIPT_URL, {
       method: "POST",
       body: JSON.stringify({
@@ -61,29 +60,28 @@ async function sendData(){
         lat: lat,
         lon: lon,
         status: status,
-        ip: ipData.ip,
-        device: device
+        ip: "N/A",
+        device: deviceId
       })
     });
 
     const result = await response.text();
 
-    // ✅ النتائج
     if(result === "OK"){
       alert("✅ تم تسجيل الدخول");
     }
     else if(result === "Device already used"){
-      alert("❌ هذا الجهاز أو الشبكة مستخدمة مسبقًا");
+      alert("❌ هذا الجهاز مستخدم مسبقًا");
     }
     else if(result === "Already checked in"){
       alert("❌ انت مسجل دخول بالفعل");
     }
     else{
-      alert("❌ لا يمكن تسجيل الدخول");
+      alert("❌ خطأ في التسجيل");
     }
 
   }, ()=>{
-    alert("❌ لازم تسمح بالوصول للموقع");
+    alert("❌ لازم تشغل الموقع (GPS)");
   });
 }
 </script>
