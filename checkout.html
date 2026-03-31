@@ -9,12 +9,17 @@
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqM1W_iSGaCXersjC91eS7RF-s2b9fOfLfOw1vDbYLgnd_PfnYg-3t2P8plnwefM1Bhg/exec";
 
-// 📍 إحداثيات المؤسسة
 const OFFICE_LAT = 31.4037;
 const OFFICE_LON = 34.31997;
 
-// 📏 المسافة المسموحة (بالمتر)
 const MAX_DISTANCE = 150;
+
+// 🔥 نفس Device ID
+let deviceId = localStorage.getItem("deviceId");
+if(!deviceId){
+  deviceId = Math.random().toString(36).substring(2);
+  localStorage.setItem("deviceId", deviceId);
+}
 
 function getDistance(lat1, lon1, lat2, lon2) {
   const R = 6371e3;
@@ -23,9 +28,9 @@ function getDistance(lat1, lon1, lat2, lon2) {
   const Δφ = (lat2-lat1) * Math.PI/180;
   const Δλ = (lon2-lon1) * Math.PI/180;
 
-  const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-            Math.cos(φ1) * Math.cos(φ2) *
-            Math.sin(Δλ/2) * Math.sin(Δλ/2);
+  const a = Math.sin(Δφ/2)**2 +
+            Math.cos(φ1)*Math.cos(φ2)*
+            Math.sin(Δλ/2)**2;
 
   return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
 }
@@ -34,7 +39,7 @@ async function sendData(){
   const name = document.getElementById("name").value;
 
   if(name.trim() === ""){
-    alert("❌ الرجاء إدخال الاسم");
+    alert("❌ ادخل الاسم");
     return;
   }
 
@@ -43,17 +48,8 @@ async function sendData(){
     const lon = pos.coords.longitude;
 
     const distance = getDistance(lat, lon, OFFICE_LAT, OFFICE_LON);
-
     let status = distance <= MAX_DISTANCE ? "داخل المؤسسة" : "خارج المؤسسة";
 
-    // 🌐 جلب IP
-    const res = await fetch("https://api.ipify.org?format=json");
-    const ipData = await res.json();
-
-    // 📱 معلومات الجهاز
-    const device = navigator.userAgent;
-
-    // 🔥 إرسال البيانات للسيرفر
     const response = await fetch(SCRIPT_URL, {
       method: "POST",
       body: JSON.stringify({
@@ -62,29 +58,28 @@ async function sendData(){
         lat: lat,
         lon: lon,
         status: status,
-        ip: ipData.ip,
-        device: device
+        ip: "N/A",
+        device: deviceId
       })
     });
 
     const result = await response.text();
 
-    // ✅ عرض النتيجة
     if(result === "OK"){
       alert("✅ تم تسجيل الخروج");
     }
     else if(result === "Device already used"){
-      alert("❌ هذا الجهاز أو الشبكة مستخدمة مسبقًا");
+      alert("❌ هذا الجهاز مستخدم مسبقًا");
     }
-    else if(result === "Already checked in"){
-      alert("❌ انت مسجل دخول بالفعل");
+    else if(result === "Cannot checkout"){
+      alert("❌ لازم تسجل دخول أول");
     }
     else{
-      alert("❌ لازم تسجل دخول قبل الخروج");
+      alert("❌ خطأ في العملية");
     }
 
   }, ()=>{
-    alert("❌ لازم تسمح بالوصول للموقع");
+    alert("❌ لازم تشغل الموقع");
   });
 }
 </script>
