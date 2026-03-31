@@ -9,14 +9,12 @@
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbylW4u_qxTKmrHYiv5mP3xwvJ3_Frs3cb3hbRc2Z3o_D4lm8GBrEz1ZAGzyvgRv0La5Ng/exec";
 
-// 📍 إحداثيات المؤسسة
 const OFFICE_LAT = 31.4037;
 const OFFICE_LON = 34.31997;
 
-// 📏 المسافة
 const MAX_DISTANCE = 300;
 
-// 🔥 توليد Device ID
+// 🔥 Device ID
 let deviceId = localStorage.getItem("deviceId");
 if(!deviceId){
   deviceId = Math.random().toString(36).substring(2);
@@ -46,13 +44,7 @@ async function sendData(){
   }
 
   navigator.geolocation.getCurrentPosition(async (pos)=>{
-}, ()=>{
-  alert("❌ لازم تشغل الموقع");
-}, {
-  enableHighAccuracy: true,
-  timeout: 10000,
-  maximumAge: 0
-});
+
     const lat = pos.coords.latitude;
     const lon = pos.coords.longitude;
 
@@ -88,7 +80,11 @@ async function sendData(){
     }
 
   }, ()=>{
-    alert("❌ لازم تشغل الموقع (GPS)");
+    alert("❌ لازم تشغل الموقع");
+  }, {
+    enableHighAccuracy: true,
+    timeout: 10000,
+    maximumAge: 0
   });
 }
 </script>
