@@ -1,89 +1,3 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تسجيل دخول</title>
-
-<style>
-body {
-  font-family: Arial;
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
-  margin: 0;
-  padding: 20px;
-}
-
-.container {
-  background: white;
-  padding: 20px;
-  border-radius: 20px;
-  width: 100%;
-  max-width: 400px;
-  margin: auto;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-}
-
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.employee {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #f5f5f5;
-  padding: 12px;
-  margin: 6px 0;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.employee:hover {
-  background: #d6eaff;
-}
-
-button {
-  margin-top: 15px;
-  width: 100%;
-  padding: 14px;
-  border: none;
-  border-radius: 10px;
-  background: #4facfe;
-  color: white;
-  font-size: 18px;
-  cursor: pointer;
-}
-
-button:hover {
-  background: #2e8df5;
-}
-</style>
-</head>
-
-<body>
-
-<div class="container">
-  <h2>📍 تسجيل دخول</h2>
-
-  <label class="employee"><input type="radio" name="employee" value="أيمن أبو روك"> أيمن أبو روك</label>
-  <label class="employee"><input type="radio" name="employee" value="اسراء موسى"> اسراء موسى</label>
-  <label class="employee"><input type="radio" name="employee" value="فادي الأسطل"> فادي الأسطل</label>
-  <label class="employee"><input type="radio" name="employee" value="فوزية الكردي"> فوزية الكردي</label>
-
-  <label class="employee"><input type="radio" name="employee" value="وسيم المغربي"> وسيم المغربي</label>
-  <label class="employee"><input type="radio" name="employee" value="بلال ابو روك"> بلال ابو روك</label>
-  <label class="employee"><input type="radio" name="employee" value="سحر كلخ"> سحر كلخ</label>
-  <label class="employee"><input type="radio" name="employee" value="اسراء العيلة"> اسراء العيلة</label>
-
-  <label class="employee"><input type="radio" name="employee" value="نسرين محيسن"> نسرين محيسن</label>
-  <label class="employee"><input type="radio" name="employee" value="فراس الفرا"> فراس الفرا</label>
-  <label class="employee"><input type="radio" name="employee" value="أحمد صافي"> أحمد صافي</label>
-  <label class="employee"><input type="radio" name="employee" value="جمال أبو رجيلة"> جمال أبو رجيلة</label>
-
-  <button onclick="sendData()">دخول</button>
-</div>
-
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbylW4u_qxTKmrHYiv5mP3xwvJ3_Frs3cb3hbRc2Z3o_D4lm8GBrEz1ZAGzyvgRv0La5Ng/exec";
 
@@ -147,11 +61,15 @@ async function sendData(){
 
     const result = await response.text();
 
+    // ✅ الرسائل المحدثة
     if(result === "OK"){
       alert("✅ تم تسجيل الدخول");
     }
-    else if(result === "Device already used"){
-      alert("❌ هذا الجهاز مستخدم مسبقًا");
+    else if(result === "Device already used today"){
+      alert("❌ هذا الجهاز سجل اليوم بالفعل");
+    }
+    else if(result === "Wrong user"){
+      alert("❌ لا يمكنك اختيار اسم شخص آخر");
     }
     else if(result === "Already checked in"){
       alert("❌ انت مسجل دخول بالفعل");
@@ -169,6 +87,3 @@ async function sendData(){
   });
 }
 </script>
-
-</body>
-</html>
