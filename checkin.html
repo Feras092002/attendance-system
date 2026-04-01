@@ -151,21 +151,21 @@ async function sendData(){
     const result = await response.text();
 
     // ✅ الرسائل المحدثة
-    if(result === "OK"){
-      alert("✅ تم تسجيل الدخول");
-    }
-    else if(result === "Device already used today"){
-      alert("❌ هذا الجهاز سجل اليوم بالفعل");
-    }
-    else if(result === "Wrong user"){
-      alert("❌ لا يمكنك اختيار اسم شخص آخر");
-    }
-    else if(result === "Already checked in"){
-      alert("❌ انت مسجل دخول بالفعل");
-    }
-    else{
-      alert("❌ خطأ في التسجيل");
-    }
+if(result === "OK"){
+  alert("✅ تم تسجيل الدخول");
+}
+else if(result === "Already checked in today"){
+  alert("❌ انت مسجل اليوم بالفعل");
+}
+else if(result === "Device already used today"){
+  alert("❌ هذا الجهاز سجل اليوم بالفعل");
+}
+else if(result === "Wrong user"){
+  alert("❌ لا يمكنك اختيار اسم شخص آخر");
+}
+else{
+  alert("❌ خطأ في التسجيل");
+}
 
   }, ()=>{
     alert("❌ لازم تشغل الموقع");
