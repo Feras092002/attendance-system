@@ -43,6 +43,10 @@ h2 {
   background: #d6eaff;
 }
 
+.employee input {
+  transform: scale(1.2);
+}
+
 button {
   margin-top: 15px;
   width: 100%;
@@ -55,7 +59,12 @@ button {
   cursor: pointer;
 }
 
-button:hover {
+button:disabled {
+  background: gray;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
   background: #2e8df5;
 }
 </style>
@@ -83,24 +92,23 @@ button:hover {
   <label class="employee"><input type="radio" name="employee" value="جمال أبو رجيلة"> جمال أبو رجيلة</label>
   <label class="employee"><input type="radio" name="employee" value="هاني أبو مغنم"> هاني أبو مغنم</label>
 
-
-  <button onclick="sendData()">دخول</button>
+  <button id="btn" onclick="sendData()">دخول</button>
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyGcy8cacAdjgHU2zZQYbRRHdhwNZebYMLC56S6RAaAKvjdNDboZYInV1glyM6Z01Z5Ag/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxmZlQ09k9BLcEtSbKK-JwyUNaas6gs9XtiI3JYw7ymx4wMPQd_tFsQejr3wP5DUs_BkQ/exec";
 
 const OFFICE_LAT = 31.4037;
 const OFFICE_LON = 34.31997;
-
 const MAX_DISTANCE = 300;
 
-// 🔥 Device ID
 let deviceId = localStorage.getItem("deviceId");
 if(!deviceId){
   deviceId = Math.random().toString(36).substring(2);
   localStorage.setItem("deviceId", deviceId);
 }
+
+const btn = document.getElementById("btn");
 
 function getDistance(lat1, lon1, lat2, lon2) {
   const R = 6371e3;
@@ -118,10 +126,15 @@ function getDistance(lat1, lon1, lat2, lon2) {
 
 async function sendData(){
 
+  btn.disabled = true;
+  btn.innerText = "⏳ جاري التسجيل...";
+
   const selected = document.querySelector('input[name="employee"]:checked');
 
   if(!selected){
     alert("❌ اختار اسمك");
+    btn.disabled = false;
+    btn.innerText = "دخول";
     return;
   }
 
@@ -150,25 +163,29 @@ async function sendData(){
 
     const result = await response.text();
 
-    // ✅ الرسائل المحدثة
-if(result === "OK"){
-  alert("✅ تم تسجيل الدخول");
-}
-else if(result === "Already checked in today"){
-  alert("❌ انت مسجل اليوم بالفعل");
-}
-else if(result === "Device already used today"){
-  alert("❌ هذا الجهاز سجل اليوم بالفعل");
-}
-else if(result === "Wrong user"){
-  alert("❌ لا يمكنك اختيار اسم شخص آخر");
-}
-else{
-  alert("❌ خطأ في التسجيل");
-}
+    if(result === "OK"){
+      alert("✅ تم تسجيل الدخول");
+    }
+    else if(result === "Already checked in today"){
+      alert("❌ انت مسجل اليوم بالفعل");
+    }
+    else if(result === "Device already used today"){
+      alert("❌ هذا الجهاز سجل اليوم بالفعل");
+    }
+    else if(result === "Wrong user"){
+      alert("❌ لا يمكنك اختيار اسم شخص آخر");
+    }
+    else{
+      alert("❌ خطأ في التسجيل");
+    }
+
+    btn.disabled = false;
+    btn.innerText = "دخول";
 
   }, ()=>{
     alert("❌ لازم تشغل الموقع");
+    btn.disabled = false;
+    btn.innerText = "دخول";
   }, {
     enableHighAccuracy: true,
     timeout: 10000,
